@@ -1,0 +1,25 @@
+<template>
+  <v-row justify="center">
+    <v-col cols="6">
+      <v-card outlined>
+        <v-card-text class="text-center text-h6 orange--text text--darken-2">
+          Welcome to Concordis!
+        </v-card-text>
+        <v-card-text class="text-subtitle-1">
+          Concordis is a service that allows you to meet & chat with other
+          gamers!
+        </v-card-text>
+        <v-card-text class="text-subtitle-1">
+          How it works:
+          <ul>
+            <li>Login via Discord</li>
+            <li>Go to the <b>meet</b> page</li>
+            <li>Get matched up!</li>
+            <li>Chat</li>
+            <li>Add or Skip</li>
+          </ul>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
+</template>
