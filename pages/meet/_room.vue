@@ -198,6 +198,7 @@ export default Vue.extend({
         }, 5000)
       }
     },
+    messages: 'scrollToLastMessage',
   },
   mounted() {
     this.socket = this.$nuxtSocket({
@@ -350,6 +351,14 @@ export default Vue.extend({
         }`
 
       return fallbackImg
+    },
+    scrollToLastMessage() {
+      const chatContainer = this.$el.getElementsByClassName('chat-container')[0]
+      const lastMessage = chatContainer.lastElementChild
+
+      if (lastMessage) {
+        lastMessage.scrollIntoView({ block: 'end' })
+      }
     },
     async copyUsername(username: string) {
       await navigator.clipboard.writeText(username)
