@@ -24,7 +24,8 @@ const userMiddleware: Middleware = async (context) => {
       if (context.$auth.$storage.getCookie('sid')) {
         context.$auth.$storage.removeCookie('sid')
       }
-      return redirect(context.env.WEBSITE_URL)
+
+      return context.redirect(context.env.WEBSITE_URL)
     }
 
     const user = await context.$axios.$post(
