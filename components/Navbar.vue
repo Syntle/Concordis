@@ -4,7 +4,10 @@
       <h1 class="orange--text text--darken-2">Concordis</h1>
       <v-divider class="mx-3" inset vertical />
       <v-btn class="mr-2" depressed nuxt to="/">Home</v-btn>
-      <v-btn v-if="$auth.loggedIn" depressed nuxt to="/meet">Meet</v-btn>
+      <v-btn class="mr-2" v-if="$auth.loggedIn" depressed nuxt to="/meet">
+        Meet
+      </v-btn>
+      <v-btn depressed nuxt to="/demo">Demo</v-btn>
       <v-spacer />
       <v-divider class="mx-3" inset vertical />
       <div v-if="!$auth.loggedIn">
