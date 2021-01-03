@@ -27,7 +27,8 @@
     "types": [
       "@types/node",
       "@nuxt/types",
-      "@nuxtjs/auth-next",
+      "@nuxtjs/auth",
+      "@types/nuxtjs__auth",
       "@nuxtjs/axios",
       "nuxt-socket-io"
     ]
