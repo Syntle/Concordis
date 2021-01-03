@@ -19,6 +19,11 @@
             <li>Add or Skip</li>
           </ul>
         </v-card-text>
+        <v-card-text>
+          You could also use the
+          <a href="/demo" class="text-decoration-none">demo</a>
+          page in case you don't have a Discord account or don't wish to login!
+        </v-card-text>
       </v-card>
     </v-col>
   </v-row>
