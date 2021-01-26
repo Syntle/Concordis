@@ -17,23 +17,27 @@
               v-text="icons.accountPlus"
             />
           </template>
+          <template #item.delete="{ item }">
+            <v-icon small @click="promptRemove(item)" v-text="icons.delete" />
             <v-dialog v-model="showFriendRemovePrompt" width="500">
               <v-card class="text-center">
                 <v-card-title class="text-center">
-                  Are you sure you want to unfriend {{ item.username }}?
+                  Are you sure you want to unfriend
+                  {{ removingFriend.username }}?
                 </v-card-title>
                 <v-divider />
                 <v-card-actions>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn
                     color="red darken-3"
                     @click="showFriendRemovePrompt = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn color="green darken-2" @click="removeFriend(item.id)">
-                    Unfriend
-                  </v-btn>
+                    v-text="'Cancel'"
+                  />
+                  <v-btn
+                    color="green darken-2"
+                    @click="removeFriend(removingFriend.id)"
+                    v-text="'Unfriend'"
+                  />
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -69,17 +73,26 @@ export default Vue.extend({
           width: 1,
           divider: true,
         },
+        {
+          text: ' ',
+          value: 'delete',
           align: 'center',
           class: 'orange darken-2',
           width: 1,
         },
       ],
       showFriendRemovePrompt: false,
+      removingFriend: {},
       icons: {
         delete: mdiDelete,
         accountPlus: mdiAccountPlus,
       },
     }
+  },
+  watch: {
+    showFriendRemovePrompt(newVal) {
+      if (!newVal) this.removingFriend = {}
+    },
   },
   async mounted() {
     const {
@@ -107,6 +120,10 @@ export default Vue.extend({
     if (getFriends) this.friends = getFriends.friends
   },
   methods: {
+    promptRemove(friend: any) {
+      this.removingFriend = friend
+      this.showFriendRemovePrompt = true
+    },
     openInNewTab(link: string) {
       window.open(link, '_blank')
     },
