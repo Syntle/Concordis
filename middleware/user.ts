@@ -1,10 +1,21 @@
 import { Middleware } from '@nuxt/types'
 
-const userMiddleware: Middleware = async (context) => {
-  if (context.$auth.loggedIn) {
-    const { data: getSession } = await context.$axios({
+const userMiddleware: Middleware = async ({
+  $auth,
+  $axios,
+  $vuetify,
+  env,
+  redirect,
+  store,
+}) => {
+  if ($auth.loggedIn) {
+    const {
+      data: {
+        data: { getSession },
+      },
+    } = await $axios({
       method: 'post',
-      url: `${process.env.WEBSITE_URL}/graphql`,
+      url: `${env.WEBSITE_URL}/graphql`,
       data: {
         query:
           'query Session($id: ID!) { \
@@ -14,32 +25,33 @@ const userMiddleware: Middleware = async (context) => {
             } \
           }',
         variables: {
-          id: context.$auth.$state.sid,
+          id: $auth.$state.sid,
         },
       },
       headers: { 'Content-Type': 'application/json' },
     })
 
-    if (!getSession.data.getSession) {
-      if (context.$auth.$storage.getCookie('sid')) {
-        context.$auth.$storage.removeCookie('sid')
+    if (!getSession) {
+      if ($auth.$storage.getCookie('sid')) {
+        $auth.$storage.removeCookie('sid')
       }
 
-      return context.redirect(context.env.WEBSITE_URL)
+      return redirect(env.WEBSITE_URL)
     }
 
-    const user = await context.$axios.$post(
-      `${context.env.WEBSITE_URL}/api/discord/user`,
-      {
-        token: getSession.data.getSession.accessToken,
-      }
-    )
+    const user = await $axios.$post(`${env.WEBSITE_URL}/api/discord/user`, {
+      token: getSession.accessToken,
+    })
 
-    context.$auth.setUser(user)
+    $auth.setUser(user)
 
-    const { data: settings } = await context.$axios({
+    const {
+      data: {
+        data: { getSettings },
+      },
+    } = await $axios({
       method: 'post',
-      url: `${process.env.WEBSITE_URL}/graphql`,
+      url: `${env.WEBSITE_URL}/graphql`,
       data: {
         query:
           'query Settings($userID: String!) { \
@@ -47,15 +59,14 @@ const userMiddleware: Middleware = async (context) => {
               theme \
             } \
           }',
-        variables: { userID: context.$auth.user.id },
+        variables: { userID: $auth.user.id },
       },
       headers: { 'Content-Type': 'application/json' },
     })
 
-    if (settings.data.getSettings) {
-      context.store.commit('setTheme', settings.data.getSettings.theme)
-      context.$vuetify.theme.dark =
-        settings.data.getSettings.theme === 'Dark' ? true : false
+    if (getSettings) {
+      store.commit('setTheme', getSettings.theme)
+      $vuetify.theme.dark = getSettings.theme === 'Dark' ? true : false
     }
   }
 }

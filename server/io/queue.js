@@ -127,7 +127,7 @@ const matchUsers = async (socket, io) => {
           })
 
           const interestsInCommon = userInterests.filter((interest) => {
-            return user2Interests.indexOf(interest) != -1
+            return user2Interests.includes(interest)
           })
 
           if (interestsInCommon.length) {

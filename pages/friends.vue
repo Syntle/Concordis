@@ -68,7 +68,11 @@ export default Vue.extend({
     }
   },
   async mounted() {
-    const { data: friends } = await this.$axios({
+    const {
+      data: {
+        data: { getFriends },
+      },
+    } = await this.$axios({
       method: 'post',
       url: `${process.env.WEBSITE_URL}/graphql`,
       data: {
@@ -86,7 +90,7 @@ export default Vue.extend({
       headers: { 'Content-Type': 'application/json' },
     })
 
-    if (friends.data.getFriends) this.friends = friends.data.getFriends.friends
+    if (getFriends) this.friends = getFriends.friends
   },
   methods: {
     async removeFriend(friendID: string) {
@@ -100,7 +104,7 @@ export default Vue.extend({
             'mutation Friend($userID: String! $friendID: String!) { \
               removeFriend(userID: $userID friendID: $friendID) \
             }',
-          variables: { userID: this.$auth.user.id, friendID: friendID },
+          variables: { userID: this.$auth.user.id, friendID },
         },
         headers: { 'Content-Type': 'application/json' },
       })

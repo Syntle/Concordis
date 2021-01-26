@@ -224,9 +224,8 @@ export default Vue.extend({
             (v: string, i: number, array) => i !== array.indexOf(v.trim())
           ).length || 'The same tag can not be added more than once',
         (interests: string[]) =>
-          interests.every(
-            (interest) => !new RegExp(/([^A-Za-z0-9 ])/g).test(interest)
-          ) || 'You can only use alphanumerical values!',
+          interests.every((interest) => !/([^A-Za-z0-9 ])/g.test(interest)) ||
+          'You can only use alphanumerical values!',
         (interests: string[]) =>
           interests.every((interest) => interest.length >= 3) ||
           'Interests need to be at least 3 characters long.',
@@ -246,7 +245,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    autoJoin(newVal, oldVal) {
+    autoJoin(newVal) {
       if (this.countdownStarted && newVal) return
       if (newVal) {
         this.countdownStarted = true
@@ -266,7 +265,7 @@ export default Vue.extend({
         this.autoJoinTimer = 5
       }
     },
-    validInterests(newVal, oldVal) {
+    validInterests(newVal) {
       if (newVal) {
         this.joinQueueDisabled = false
       } else {

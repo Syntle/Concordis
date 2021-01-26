@@ -28,19 +28,9 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-card class="side-panel pa-5 mr-7">
-          <v-avatar class="mb-2" size="125" rounded>
-            <img
-              :src="
-                getAvatar(
-                  stranger,
-                  '/images/stranger-avatar-' +
-                    $auth.$state.theme.toLowerCase() +
-                    '-placeholder.png'
-                )
-              "
-            />
-          </v-avatar>
+            <v-avatar class="mb-2" size="125" rounded>
+              <img :src="getAvatar()" />
+            </v-avatar>
           <div class="username mb-2">
             {{ stranger.username }}
             <div v-if="stranger.username && stranger.username != 'Stranger'">
@@ -179,7 +169,7 @@ export default Vue.extend({
       socketID: '',
       roomID: this.$route.params.room,
       inputMessage: '',
-      stranger: { username: 'Stranger', id: null, avatar: null },
+      stranger: { username: 'Stranger', id: null, avatar: '' },
       messages: [],
       disableAddBtn: false,
       disableChat: false,
@@ -344,13 +334,16 @@ export default Vue.extend({
         room: this.roomID,
       })
     },
-    getAvatar(user: any, fallbackImg: string) {
-      if (user.avatar)
+    getAvatar() {
+      const user = this.stranger
+
+      if (user.avatar) {
         return `${this.DISCORD_CDN_BASE}/avatars/${user.id}/${user.avatar}.${
           user.avatar.startsWith('a_') ? 'gif' : 'png'
         }`
+      }
 
-      return fallbackImg
+      return `/images/stranger-avatar-${this.$auth.$state.theme.toLowerCase()}-placeholder.png`
     },
     scrollToLastMessage() {
       const chatContainer = this.$el.getElementsByClassName('chat-container')[0]

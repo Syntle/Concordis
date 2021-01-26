@@ -37,7 +37,11 @@ export const actions: ActionTree<RootState, RootState> = {
     }
 
     if (this.$auth.loggedIn) {
-      const { data: getSession } = await this.$axios({
+      const {
+        data: {
+          data: { getSession },
+        },
+      } = await this.$axios({
         method: 'post',
         url: `${process.env.WEBSITE_URL}/graphql`,
         data: {
@@ -55,7 +59,7 @@ export const actions: ActionTree<RootState, RootState> = {
         headers: { 'Content-Type': 'application/json' },
       })
 
-      if (!getSession.data.getSession) {
+      if (!getSession) {
         if (this.$auth.$storage.getCookie('sid')) {
           this.$auth.$storage.removeCookie('sid')
         }
@@ -68,7 +72,7 @@ export const actions: ActionTree<RootState, RootState> = {
           method: 'get',
           url: `${process.env.DISCORD_API_BASE}/users/@me`,
           headers: {
-            Authorization: `Bearer ${getSession.data.getSession.accessToken}`,
+            Authorization: `Bearer ${getSession.accessToken}`,
           },
         })
 
@@ -81,7 +85,11 @@ export const actions: ActionTree<RootState, RootState> = {
         return redirect(`${process.env.WEBSITE_URL}/login`)
       }
 
-      const { data: settings } = await this.$axios({
+      const {
+        data: {
+          data: { getSettings },
+        },
+      } = await this.$axios({
         method: 'post',
         url: `${process.env.WEBSITE_URL}/graphql`,
         data: {
@@ -96,8 +104,8 @@ export const actions: ActionTree<RootState, RootState> = {
         headers: { 'Content-Type': 'application/json' },
       })
 
-      if (settings.data.getSettings) {
-        commit('setTheme', settings.data.getSettings.theme)
+      if (getSettings) {
+        commit('setTheme', getSettings.theme)
       }
     }
   },

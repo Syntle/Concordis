@@ -79,7 +79,11 @@ export default Vue.extend({
   },
   async mounted() {
     if (this.$auth.loggedIn) {
-      const { data: settings } = await this.$axios({
+      const {
+        data: {
+          data: { getSettings },
+        },
+      } = await this.$axios({
         method: 'post',
         url: `${process.env.WEBSITE_URL}/graphql`,
         data: {
@@ -94,10 +98,14 @@ export default Vue.extend({
         headers: { 'Content-Type': 'application/json' },
       })
 
-      if (settings.data.getSettings) {
-        this.currentTheme = settings.data.getSettings.theme
+      if (getSettings) {
+        this.currentTheme = getSettings.theme
       } else {
-        const { data: newSettings } = await this.$axios({
+        const {
+          data: {
+            data: { setSettings },
+          },
+        } = await this.$axios({
           method: 'post',
           url: `${process.env.WEBSITE_URL}/graphql`,
           data: {
@@ -112,8 +120,8 @@ export default Vue.extend({
           headers: { 'Content-Type': 'application/json' },
         })
 
-        if (newSettings.data.setSettings) {
-          this.currentTheme = newSettings.data.setSettings.theme
+        if (setSettings) {
+          this.currentTheme = setSettings.theme
         }
       }
 
@@ -121,14 +129,16 @@ export default Vue.extend({
     }
   },
   methods: {
-    getAvatar(user: any, fallbackImg: string) {
+    getAvatar() {
+      const user = this.$auth.user
+
       if (user.avatar) {
         return `${this.DISCORD_CDN_BASE}/avatars/${user.id}/${user.avatar}.${
           user.avatar.startsWith('a_') ? 'gif' : 'png'
         }`
       }
 
-      return fallbackImg
+      return `/images/discord-avatar-${this.currentTheme.toLowerCase()}-placeholder.png`
     },
     async toggleTheme() {
       if (this.currentTheme === 'Dark') {
@@ -140,7 +150,11 @@ export default Vue.extend({
       this.$vuetify.theme.dark = this.currentTheme === 'Dark'
       this.$store.commit('setTheme', this.currentTheme)
 
-      const { data: newSettings } = await this.$axios({
+      const {
+        data: {
+          data: { setSettings },
+        },
+      } = await this.$axios({
         method: 'post',
         url: `${process.env.WEBSITE_URL}/graphql`,
         data: {
@@ -155,7 +169,7 @@ export default Vue.extend({
         headers: { 'Content-Type': 'application/json' },
       })
 
-      return newSettings
+      return setSettings
     },
   },
 })

@@ -11,28 +11,32 @@ const formUrlEncode = (data: any) => {
 }
 
 export default Vue.extend({
-  async asyncData(context) {
-    if (!context.query.code) return context.redirect('/')
+  async asyncData({ query, redirect, env, $config, $axios, $auth }) {
+    if (!query.code) return redirect('/')
 
     const tokenRequest = {
-      client_id: context.env.CLIENT_ID,
-      client_secret: context.$config.CLIENT_SECRET,
+      client_id: env.CLIENT_ID,
+      client_secret: $config.CLIENT_SECRET,
       grant_type: 'authorization_code',
-      code: context.query.code,
-      redirect_uri: `${context.env.WEBSITE_URL}/token`,
+      code: query.code,
+      redirect_uri: `${env.WEBSITE_URL}/token`,
       scope: 'identify',
     }
 
-    const { data: codeExchange } = await context.$axios({
+    const { data: codeExchange } = await $axios({
       method: 'post',
       url: 'https://discord.com/api/oauth2/token',
       data: formUrlEncode(tokenRequest),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     })
 
-    const { data: sessionCheck } = await context.$axios({
+    const {
+      data: {
+        data: { sessionExists },
+      },
+    } = await $axios({
       method: 'post',
-      url: `${context.env.WEBSITE_URL}/graphql`,
+      url: `${env.WEBSITE_URL}/graphql`,
       data: {
         query:
           'query Session($accessToken: String!) { \
@@ -45,10 +49,14 @@ export default Vue.extend({
       headers: { 'Content-Type': 'application/json' },
     })
 
-    if (!sessionCheck.data.sessionExists) {
-      const { data: sessionCreate } = await context.$axios({
+    if (!sessionExists) {
+      const {
+        data: {
+          data: { setSession: sessionCreate },
+        },
+      } = await $axios({
         method: 'post',
-        url: `${context.env.WEBSITE_URL}/graphql`,
+        url: `${env.WEBSITE_URL}/graphql`,
         data: {
           query:
             'mutation Session($accessToken: String! $refreshToken: String! $expiresIn: Int! $scope: String!) { \
@@ -69,14 +77,11 @@ export default Vue.extend({
         headers: { 'Content-Type': 'application/json' },
       })
 
-      context.$auth.$storage.setCookie('sid', sessionCreate.data.setSession.id)
-      context.redirect('/')
+      $auth.$storage.setCookie('sid', sessionCreate.id)
+      redirect('/')
     } else {
-      context.$auth.$storage.setCookie(
-        'sid',
-        sessionCheck.data.sessionExists.id
-      )
-      context.redirect('/')
+      $auth.$storage.setCookie('sid', sessionExists.id)
+      redirect('/')
     }
   },
 })

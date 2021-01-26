@@ -5,35 +5,28 @@
 import Vue from 'vue'
 
 export default Vue.extend({
-  middleware(context) {
-    if (!context.$auth.loggedIn) {
-      context.redirect('/')
-    } else {
-      const sid = context.$auth.$state.sid
-      if (context.$auth.$storage.getCookie('sid'))
-        context.$auth.$storage.removeCookie('sid')
-      if (context.$auth.$state.sid) context.$auth.$storage.removeState('sid')
-      if (context.$auth.user) context.$auth.setUser(undefined)
+  middleware({ $auth, $axios, redirect }) {
+    if (!$auth.loggedIn) return redirect('/')
 
-      context
-        .$axios({
-          method: 'post',
-          url: `${process.env.WEBSITE_URL}/graphql`,
-          data: {
-            query:
-              'mutation Session($id: ID!) { \
+    const sid = $auth.$state.sid
+    if ($auth.$storage.getCookie('sid')) $auth.$storage.removeCookie('sid')
+    if ($auth.$state.sid) $auth.$storage.removeState('sid')
+    if ($auth.user) $auth.setUser(undefined)
+
+    $axios({
+      method: 'post',
+      url: `${process.env.WEBSITE_URL}/graphql`,
+      data: {
+        query:
+          'mutation Session($id: ID!) { \
                 deleteSession(id: $id) \
               }',
-            variables: {
-              id: sid,
-            },
-          },
-          headers: { 'Content-Type': 'application/json' },
-        })
-        .then(() => {
-          context.redirect('/')
-        })
-    }
+        variables: {
+          id: sid,
+        },
+      },
+      headers: { 'Content-Type': 'application/json' },
+    }).then(() => redirect('/'))
   },
 })
 </script>

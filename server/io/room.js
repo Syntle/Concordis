@@ -111,7 +111,7 @@ const joinedRoom = async (socket, io, user, room) => {
     })
 
     io.of('room').to(`/room#${user2.socketID}`).emit('alreadyFriends', {
-      user: user,
+      user,
     })
   }
 
@@ -124,7 +124,7 @@ const joinedRoom = async (socket, io, user, room) => {
 
   if (userInterests.length && user2Interests.length) {
     const interestsInCommon = userInterests.filter((interest) => {
-      return user2Interests.indexOf(interest) != -1
+      return user2Interests.includes(interest)
     })
 
     if (interestsInCommon.length) {
@@ -274,9 +274,9 @@ const messageHandler = async (socket, io, message) => {
 
 const notification = (socket, io, type, roomID, user, interests) => {
   io.of('room').in(roomID).emit('notification', {
-    type: type,
-    user: user,
-    interests: interests,
+    type,
+    user,
+    interests,
   })
 }
 
