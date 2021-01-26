@@ -366,6 +366,7 @@ export default Vue.extend({
       this.activeComponent = 'interests'
       this.messages = []
       this.stranger = 'Stranger'
+      this.friended = false
       this.inputMessage = ''
     },
   },
