@@ -1,6 +1,6 @@
 # Concordis
 
-### Concordis is a service that allows you to meet & chat with other gamers!
+### Concordis is a website kind of like Omegle with a tinder-ish add/skip system where you can meet new friends!
 
 ## **Built using**
 * TypeScript
