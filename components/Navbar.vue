@@ -21,16 +21,7 @@
           <template #activator="{ on }">
             <v-btn rounded icon v-on="on">
               <v-avatar size="35">
-                <img
-                  :src="
-                    getAvatar(
-                      $auth.user,
-                      '/images/discord-avatar-' +
-                        currentTheme.toLowerCase() +
-                        '-placeholder.png'
-                    )
-                  "
-                />
+                <img :src="getAvatar()" />
               </v-avatar>
             </v-btn>
           </template>
