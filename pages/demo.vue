@@ -303,6 +303,11 @@ export default Vue.extend({
     sendMessage(): any {
       if (!this.inputMessage) return
 
+      if (!this.inputMessage.trim().length) {
+        this.inputMessage = ''
+        return
+      }
+
       const userMessage = {
         type: 'message',
         date: new Date(),
