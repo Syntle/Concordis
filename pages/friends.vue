@@ -10,10 +10,13 @@
           :headers="headers"
           :items="friends"
         >
-          <template #item.actions="{ item }">
-            <v-icon small @click="showFriendRemovePrompt = true">
-              mdi-delete
-            </v-icon>
+          <template #item.add="{ item }">
+            <v-icon
+              small
+              @click="openInNewTab(`https://discord.com/users/${item.id}`)"
+              v-text="icons.accountPlus"
+            />
+          </template>
             <v-dialog v-model="showFriendRemovePrompt" width="500">
               <v-card class="text-center">
                 <v-card-title class="text-center">
@@ -59,7 +62,12 @@ export default Vue.extend({
         },
         {
           text: ' ',
-          value: 'actions',
+          value: 'add',
+          align: 'center',
+          class: 'orange darken-2',
+          width: 1,
+          divider: true,
+        },
           align: 'center',
           class: 'orange darken-2',
           width: 1,
@@ -98,6 +106,9 @@ export default Vue.extend({
     if (getFriends) this.friends = getFriends.friends
   },
   methods: {
+    openInNewTab(link: string) {
+      window.open(link, '_blank')
+    },
     async removeFriend(friendID: string) {
       this.showFriendRemovePrompt = false
 

@@ -73,34 +73,11 @@
             <v-avatar class="mb-2" size="125" rounded>
               <img src="/images/stranger-avatar-dark-placeholder.png" />
             </v-avatar>
-            <div class="username mb-2">
-              {{ stranger }}
-              <div v-if="stranger && stranger != 'Stranger'">
-                <v-tooltip right>
+              <div class="d-flex justify-space-between">
+                <v-dialog v-model="showAddPrompt" width="500">
                   <template #activator="{ on, attrs }">
                     <v-btn
-                      small
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="copyUsername(stranger)"
-                    >
-                      <v-icon small>mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>{{
-                    copiedUsername ? 'Copied!' : 'Copy Username'
-                  }}</span>
-                </v-tooltip>
-              </div>
-            </div>
-            <div class="d-flex justify-space-between">
-              <v-dialog v-model="showAddPrompt" width="500">
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    :disabled="disableAddBtn"
-                    class="px-10"
-                    color="green darken-2"
+                      v-if="!friended"
                     x-large
                     v-bind="attrs"
                     v-on="on"
@@ -131,9 +108,34 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-btn class="px-10" color="red darken-3" x-large @click="skip()"
-                >Skip</v-btn
-              >
+                <v-tooltip v-if="friended" top>
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      class="px-10"
+                      color="#7289DA"
+                      v-on="on"
+                      @click="dummyAddSnackbar = true"
+                    >
+                      <v-icon left v-text="icons.discord" />
+                      Add
+                    </v-btn>
+                  </template>
+                  <span>Add the user on Discord</span>
+                </v-tooltip>
+                <v-snackbar v-model="dummyAddSnackbar" timeout="3000">
+                  You can't add the dummy user
+                  <template #action="{ attrs }">
+                    <v-btn
+                      color="red"
+                      icon
+                      v-bind="attrs"
+                      @click="dummyAddSnackbar = false"
+                    >
+                      <v-icon v-text="icons.close" />
+                    </v-btn>
+                  </template>
+                </v-snackbar>
             </div>
           </v-card>
         </v-col>
@@ -241,8 +243,9 @@ export default Vue.extend({
       stranger: 'Stranger',
       messages: [],
       inputMessage: '',
-      disableAddBtn: false,
+      friended: false,
       showAddPrompt: false,
+      dummyAddSnackbar: false,
       icons: {
         send: mdiSend,
         discord: mdiDiscord,
@@ -276,13 +279,6 @@ export default Vue.extend({
         this.joinQueueDisabled = false
       } else {
         this.joinQueueDisabled = true
-      }
-    },
-    copiedUsername(newVal, oldVal) {
-      if (newVal) {
-        setTimeout(() => {
-          this.copiedUsername = false
-        }, 5000)
       }
     },
     messages: 'scrollToLastMessage',
@@ -343,7 +339,7 @@ export default Vue.extend({
     },
     addFriend() {
       this.showAddPrompt = false
-      this.disableAddBtn = true
+      this.friended = true
 
       this.stranger = 'Me#1111'
     },
@@ -352,11 +348,6 @@ export default Vue.extend({
       this.messages = []
       this.stranger = 'Stranger'
       this.inputMessage = ''
-    },
-    async copyUsername(username: string) {
-      await navigator.clipboard.writeText(username)
-
-      this.copiedUsername = true
     },
   },
 })

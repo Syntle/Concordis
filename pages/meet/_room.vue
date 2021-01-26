@@ -31,35 +31,11 @@
             <v-avatar class="mb-2" size="125" rounded>
               <img :src="getAvatar()" />
             </v-avatar>
-          <div class="username mb-2">
-            {{ stranger.username }}
-            <div v-if="stranger.username && stranger.username != 'Stranger'">
-              <v-tooltip right>
+            <div class="d-flex justify-space-between">
+              <v-dialog v-model="showAddPrompt" width="500">
                 <template #activator="{ on, attrs }">
                   <v-btn
-                    small
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="copyUsername(stranger.username)"
-                  >
-                    <v-icon small>mdi-content-copy</v-icon>
-                  </v-btn>
-                </template>
-                <span>{{ copiedUsername ? 'Copied!' : 'Copy Username' }}</span>
-              </v-tooltip>
-            </div>
-          </div>
-          <div class="d-flex justify-space-between">
-            <v-dialog v-model="showAddPrompt" width="500">
-              <template #activator="{ on, attrs }">
-                <v-btn
-                  :disabled="disableAddBtn"
-                  class="px-10"
-                  color="green darken-2"
-                  x-large
-                  v-bind="attrs"
-                  v-on="on"
+                    v-if="!disableAddBtn"
                   >Add</v-btn
                 >
               </template>
@@ -86,8 +62,23 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <v-btn
-              class="px-10"
+              <v-tooltip v-if="disableAddBtn" top>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="px-10"
+                    color="#7289DA"
+                    v-on="on"
+                    @click="
+                      openInNewTab(`https://discord.com/users/${stranger.id}`)
+                    "
+                  >
+                    <v-icon left v-text="icons.discord" />
+                    Add
+                  </v-btn>
+                </template>
+                <span>Add the user on Discord</span>
+              </v-tooltip>
               color="red darken-3"
               x-large
               @click="$router.push('/meet')"
@@ -184,13 +175,6 @@ export default Vue.extend({
     }
   },
   watch: {
-    copiedUsername(newVal, oldVal) {
-      if (newVal) {
-        setTimeout(() => {
-          this.copiedUsername = false
-        }, 5000)
-      }
-    },
     messages: 'scrollToLastMessage',
   },
   mounted() {
@@ -271,6 +255,9 @@ export default Vue.extend({
     })
   },
   methods: {
+    openInNewTab(link: string) {
+      window.open(link, '_blank')
+    },
     joinedRoom() {
       this.socket.emit('joinedRoom', {
         user: this.getUser(),
@@ -355,11 +342,6 @@ export default Vue.extend({
       if (lastMessage) {
         lastMessage.scrollIntoView({ block: 'end' })
       }
-    },
-    async copyUsername(username: string) {
-      await navigator.clipboard.writeText(username)
-
-      this.copiedUsername = true
     },
   },
 })
