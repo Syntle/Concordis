@@ -171,7 +171,7 @@ export default Vue.extend({
     getUser() {
       return {
         id: this.$auth.user.id,
-        username: `${this.$auth.user.username}#${this.$auth.user.discriminator}`,
+        username: this.$auth.user.username,
         avatar: this.$auth.user.avatar,
         socketID: this.socketID,
       }

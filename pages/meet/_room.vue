@@ -10,7 +10,7 @@
             </v-card-text>
             <v-card-text>
               By clicking "ACCEPT" you agree to let the user get your Discord
-              username, discriminator and avatar.
+              username, ID and avatar.
             </v-card-text>
             <v-card-text>
               This is to give both users a way to continue chatting outside of
@@ -60,8 +60,8 @@
                   <v-card-title class="text-center" v-text="'Are you sure?'" />
                   <v-card-text>
                     By clicking "ADD" you agree to let the user you are chatting
-                    with get your Discord username, discriminator and avatar if
-                    they accept your request.
+                    with get your Discord username, ID and avatar if they accept
+                    your request.
                   </v-card-text>
                   <v-card-text>
                     This is to give both users a way to continue chatting
@@ -294,7 +294,7 @@ export default Vue.extend({
     getUser() {
       return {
         id: this.$auth.user.id,
-        username: `${this.$auth.user.username}#${this.$auth.user.discriminator}`,
+        username: this.$auth.user.username,
         avatar: this.$auth.user.avatar,
         socketID: this.socketID,
       }

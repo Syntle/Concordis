@@ -98,8 +98,8 @@
                     />
                     <v-card-text>
                       By clicking "ADD" you agree to let the user you are
-                      chatting with get your Discord username, discriminator and
-                      avatar if they accept your request.
+                      chatting with get your Discord username, ID and avatar if
+                      they accept your request.
                     </v-card-text>
                     <v-card-text>
                       This is to give both users a way to continue chatting
@@ -253,7 +253,7 @@ export default Vue.extend({
       autoJoinTimer: 5,
       countdownID: null,
       countdownStarted: false,
-      username: 'You#0000',
+      username: 'You',
       stranger: 'Stranger',
       messages: [],
       inputMessage: '',
@@ -360,7 +360,7 @@ export default Vue.extend({
       this.showAddPrompt = false
       this.friended = true
 
-      this.stranger = 'Me#1111'
+      this.stranger = 'Dummy User'
     },
     skip() {
       this.activeComponent = 'interests'
