@@ -1,6 +1,6 @@
 # Concordis
 
-### Concordis is a website kind of like omegle with a tinder-ish add/skip system where you can meet new friends!
+### Concordis is a website kind of like Omegle with a tinder-ish add/skip system where you can meet new friends!
 
 ## **Built using**
 * TypeScript
