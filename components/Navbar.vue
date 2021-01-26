@@ -65,16 +65,36 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import {
+  mdiAccountGroup,
+  mdiDiscord,
+  mdiHandshake,
+  mdiHome,
+  mdiLogoutVariant,
+  mdiMoonWaningCrescent,
+  mdiTestTube,
+  mdiWhiteBalanceSunny,
+} from '@mdi/js'
 
 export default Vue.extend({
   data() {
     return {
       DISCORD_CDN_BASE: process.env.DISCORD_CDN_BASE,
       account: [
-        { title: 'Friends', icon: 'mdi-account-multiple', route: '/friends' },
-        { title: 'Logout', icon: 'mdi-logout-variant', route: '/logout' },
+        { title: 'Friends', icon: mdiAccountGroup, route: '/friends' },
+        { title: 'Logout', icon: mdiLogoutVariant, route: '/logout' },
       ],
       currentTheme: 'Dark',
+      icons: {
+        home: mdiHome,
+        logout: mdiLogoutVariant,
+        discord: mdiDiscord,
+        lightMode: mdiWhiteBalanceSunny,
+        darkMode: mdiMoonWaningCrescent,
+        testTube: mdiTestTube,
+        handshake: mdiHandshake,
+        accountGroup: mdiAccountGroup,
+      },
     }
   },
   async mounted() {

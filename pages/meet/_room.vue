@@ -159,6 +159,7 @@
 </template>
 
 <script lang="ts">
+import { mdiSend } from '@mdi/js'
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -177,7 +178,9 @@ export default Vue.extend({
       showAddPrompt: false,
       friendedStranger: false,
       receivedCommonInterests: false,
-      copiedUsername: false,
+      icons: {
+        send: mdiSend,
+      },
     }
   },
   watch: {

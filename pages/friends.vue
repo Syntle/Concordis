@@ -42,6 +42,7 @@
 </template>
 
 <script lang="ts">
+import { mdiAccountPlus, mdiDelete } from '@mdi/js'
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -65,6 +66,10 @@ export default Vue.extend({
         },
       ],
       showFriendRemovePrompt: false,
+      icons: {
+        delete: mdiDelete,
+        accountPlus: mdiAccountPlus,
+      },
     }
   },
   async mounted() {

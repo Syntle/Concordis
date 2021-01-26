@@ -202,7 +202,9 @@
 </template>
 
 <script lang="ts">
+import { mdiClose, mdiDiscord, mdiSend } from '@mdi/js'
 import Vue from 'vue'
+
 export default Vue.extend({
   data() {
     return {
@@ -241,7 +243,11 @@ export default Vue.extend({
       inputMessage: '',
       disableAddBtn: false,
       showAddPrompt: false,
-      copiedUsername: false,
+      icons: {
+        send: mdiSend,
+        discord: mdiDiscord,
+        close: mdiClose,
+      },
     }
   },
   watch: {
