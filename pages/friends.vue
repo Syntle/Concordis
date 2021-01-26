@@ -49,6 +49,7 @@ import { mdiAccountPlus, mdiDelete } from '@mdi/js'
 import Vue from 'vue'
 
 export default Vue.extend({
+  middleware: ['auth'],
   data() {
     return {
       friends: [],
