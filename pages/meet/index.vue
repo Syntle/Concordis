@@ -6,15 +6,14 @@
     <div v-if="!inQueue">
       <v-container fluid>
         <v-row justify="center">
-          <v-col cols="8">
-            <v-card>
+          <v-col md="10" lg="8" xl="8">
+            <v-card class="px-5">
               <v-row justify="center">
-                <v-col cols="8">
+                <v-col md="10" lg="8" xl="8">
                   <v-card-text
                     class="text-center text-h6 orange--text text--darken-2"
-                  >
-                    Join the Queue!
-                  </v-card-text>
+                    v-text="'Join the Queue!'"
+                  />
                   <v-card-text>
                     Enter your interests in the box below to get matched up with
                     users that have similar interests. Otherwise, you will be
@@ -43,9 +42,8 @@
                       :disabled="joinQueueDisabled"
                       color="green darken-2"
                       @click="addToQueue()"
-                    >
-                      Join Queue
-                    </v-btn>
+                      v-text="'Join Queue'"
+                    />
                   </div>
                   <div class="d-flex justify-center mb-1">
                     <v-switch

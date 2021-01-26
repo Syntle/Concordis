@@ -1,9 +1,10 @@
 <template>
   <v-container fluid>
     <v-row justify="center">
-      <v-col cols="5">
+      <v-col sm="9" md="7" lg="5" xl="3">
         <v-data-table
           class="text-center"
+          mobile-breakpoint="0"
           disable-sort
           no-data-text="You don't have any friends yet!"
           no-results-text="Could not find the friend you are looking for."

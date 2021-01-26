@@ -1,18 +1,105 @@
 <template>
   <nav>
-    <v-app-bar app fixed short>
+    <v-app-bar v-if="$vuetify.breakpoint.mobile" app fixed>
+      <v-app-bar-nav-icon @click="navDrawer = !navDrawer" />
+      <v-spacer />
+      <h1 class="orange--text text--darken-2">Concordis</h1>
+    </v-app-bar>
+    <v-navigation-drawer v-model="navDrawer" absolute temporary>
+      <div v-if="$auth.loggedIn" class="d-flex justify-center my-3">
+        <v-avatar tile size="100">
+          <img :src="getAvatar()" />
+        </v-avatar>
+      </div>
+      <div v-if="$auth.loggedIn" class="d-flex justify-center mb-3">
+        <v-btn small color="red darken-2" nuxt to="/logout">
+          <v-icon left v-text="icons.logout" />
+          Logout
+        </v-btn>
+      </div>
+      <div v-if="!$auth.loggedIn" class="d-flex justify-center my-3">
+        <v-btn large color="#7289DA" nuxt to="/login">
+          <v-icon left v-text="icons.discord" />
+          Login
+        </v-btn>
+      </div>
+      <v-divider />
+      <v-list nav dense flat>
+        <v-list-item color="orange darken-2" nuxt to="/">
+          <v-list-item-icon>
+            <v-icon v-text="icons.home" />
+          </v-list-item-icon>
+          <v-list-item-title> Home </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item
+          v-if="$auth.loggedIn"
+          class="mt-1"
+          color="orange darken-2"
+          nuxt
+          to="/meet"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="icons.handshake" />
+          </v-list-item-icon>
+          <v-list-item-title> Meet </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="mt-1" color="orange darken-2" nuxt to="/demo">
+          <v-list-item-icon>
+            <v-icon v-text="icons.testTube" />
+          </v-list-item-icon>
+          <v-list-item-title> Demo </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item
+          v-if="$auth.loggedIn"
+          class="mt-1"
+          color="orange darken-2"
+          nuxt
+          to="/friends"
+        >
+          <v-list-item-icon>
+            <v-icon v-text="icons.accountGroup" />
+          </v-list-item-icon>
+          <v-list-item-title> Friends </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="mt-1" @click="toggleTheme()">
+          <v-list-item-icon>
+            <v-icon
+              v-text="
+                currentTheme === 'Dark' ? icons.lightMode : icons.darkMode
+              "
+            />
+          </v-list-item-icon>
+          <v-list-item-title
+            v-text="currentTheme === 'Dark' ? 'Light Mode' : 'Dark Mode'"
+          />
+        </v-list-item>
+        <v-divider />
+      </v-list>
+    </v-navigation-drawer>
+    <v-app-bar v-if="!$vuetify.breakpoint.mobile" app fixed short>
       <h1 class="orange--text text--darken-2">Concordis</h1>
       <v-divider class="mx-3" inset vertical />
-      <v-btn class="mr-2" depressed nuxt to="/">Home</v-btn>
-      <v-btn class="mr-2" v-if="$auth.loggedIn" depressed nuxt to="/meet">
+      <v-btn class="mr-2" depressed nuxt to="/">
+        <v-icon left v-text="icons.home" />
+        Home
+      </v-btn>
+      <v-btn v-if="$auth.loggedIn" class="mr-2" depressed nuxt to="/meet">
+        <v-icon left v-text="icons.handshake" />
         Meet
       </v-btn>
-      <v-btn depressed nuxt to="/demo">Demo</v-btn>
+      <v-btn depressed nuxt to="/demo">
+        <v-icon left v-text="icons.testTube" />
+        Demo
+      </v-btn>
       <v-spacer />
       <v-divider class="mx-3" inset vertical />
       <div v-if="!$auth.loggedIn">
         <v-btn color="#7289DA" nuxt to="/login">
-          <v-icon left>mdi-discord</v-icon>
+          <v-icon left v-text="icons.discord" />
           Login
         </v-btn>
       </div>
@@ -25,17 +112,17 @@
               </v-avatar>
             </v-btn>
           </template>
-
           <v-list>
             <v-list-item @click="toggleTheme()">
-              <v-icon left>{{
-                currentTheme === 'Dark'
-                  ? 'mdi-white-balance-sunny'
-                  : 'mdi-moon-waning-crescent'
-              }}</v-icon>
-              <v-list-item-title>{{
-                currentTheme === 'Dark' ? 'Light Mode' : 'Dark Mode'
-              }}</v-list-item-title>
+              <v-icon
+                left
+                v-text="
+                  currentTheme === 'Dark' ? icons.lightMode : icons.darkMode
+                "
+              />
+              <v-list-item-title
+                v-text="currentTheme === 'Dark' ? 'Light Mode' : 'Dark Mode'"
+              />
             </v-list-item>
             <v-list-item
               v-for="item in account"
@@ -44,8 +131,8 @@
               nuxt
               :to="item.route"
             >
-              <v-icon left>{{ item.icon }}</v-icon>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-icon left v-text="item.icon" />
+              <v-list-item-title v-text="item.title" />
             </v-list-item>
           </v-list>
         </v-menu>
@@ -71,6 +158,7 @@ export default Vue.extend({
   data() {
     return {
       DISCORD_CDN_BASE: process.env.DISCORD_CDN_BASE,
+      navDrawer: false,
       account: [
         { title: 'Friends', icon: mdiAccountGroup, route: '/friends' },
         { title: 'Logout', icon: mdiLogoutVariant, route: '/logout' },
@@ -87,6 +175,11 @@ export default Vue.extend({
         accountGroup: mdiAccountGroup,
       },
     }
+  },
+  watch: {
+    navDrawerList() {
+      this.navDrawer = false
+    },
   },
   async mounted() {
     if (this.$auth.loggedIn) {

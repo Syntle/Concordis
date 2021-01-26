@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="4">
+      <v-col md="4" lg="4" xl="4">
         <v-dialog v-model="showFriendReq" persistent width="500">
           <v-card class="text-center">
-            <v-card-title class="text-center">Friend Request!</v-card-title>
+            <v-card-title class="text-center" v-text="'Friend Request!'" />
             <v-card-text>
               The user you are chatting with has requested to add you!
             </v-card-text>
@@ -19,49 +19,71 @@
             <v-divider />
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="red darken-3" @click="rejectedFriend()">
-                Reject
-              </v-btn>
-              <v-btn color="green darken-2" @click="acceptedFriend()">
-                Accept
-              </v-btn>
+              <v-btn
+                color="red darken-3"
+                @click="rejectedFriend()"
+                v-text="'Reject'"
+              />
+
+              <v-btn
+                color="green darken-2"
+                @click="acceptedFriend()"
+                v-text="'Accept'"
+              />
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <div :class="$vuetify.breakpoint.mobile ? 'd-flex justify-center' : ''">
+          <v-card
+            :class="`side-panel pa-5 ${
+              $vuetify.breakpoint.mobile ? '' : 'mr-7'
+            }`"
+          >
             <v-avatar class="mb-2" size="125" rounded>
               <img :src="getAvatar()" />
             </v-avatar>
+            <div class="username mb-2" v-text="stranger.username" />
             <div class="d-flex justify-space-between">
               <v-dialog v-model="showAddPrompt" width="500">
                 <template #activator="{ on, attrs }">
                   <v-btn
                     v-if="!disableAddBtn"
-                  >Add</v-btn
-                >
-              </template>
-              <v-card class="text-center">
-                <v-card-title class="text-center">Are you sure?</v-card-title>
-                <v-card-text>
-                  By clicking "ADD" you agree to let the user you are chatting
-                  with get your Discord username, discriminator and avatar if
-                  they accept your request.
-                </v-card-text>
-                <v-card-text>
-                  This is to give both users a way to continue chatting outside
-                  of this service!
-                </v-card-text>
-                <v-divider />
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="red darken-3" @click="showAddPrompt = false">
-                    Cancel
-                  </v-btn>
-                  <v-btn color="green darken-2" @click="addFriend()">
-                    Add
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+                    class="px-10"
+                    color="green darken-2"
+                    x-large
+                    v-bind="attrs"
+                    v-on="on"
+                    v-text="'Add'"
+                  />
+                </template>
+                <v-card class="text-center">
+                  <v-card-title class="text-center" v-text="'Are you sure?'" />
+                  <v-card-text>
+                    By clicking "ADD" you agree to let the user you are chatting
+                    with get your Discord username, discriminator and avatar if
+                    they accept your request.
+                  </v-card-text>
+                  <v-card-text>
+                    This is to give both users a way to continue chatting
+                    outside of this service!
+                  </v-card-text>
+                  <v-divider />
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="red darken-3"
+                      @click="showAddPrompt = false"
+                      v-text="'Cancel'"
+                    />
+
+                    <v-btn
+                      color="green darken-2"
+                      @click="addFriend()"
+                      v-text="'Add'"
+                    />
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-tooltip v-if="disableAddBtn" top>
                 <template #activator="{ on, attrs }">
                   <v-btn
@@ -79,70 +101,67 @@
                 </template>
                 <span>Add the user on Discord</span>
               </v-tooltip>
-              color="red darken-3"
-              x-large
-              @click="$router.push('/meet')"
-              >Skip</v-btn
-            >
-          </div>
-        </v-card>
+              <v-btn
+                class="px-10"
+                color="red darken-3"
+                x-large
+                @click="$router.push('/meet')"
+                v-text="'Skip'"
+              />
+            </div>
+          </v-card>
+        </div>
       </v-col>
-      <v-col cols="8">
+      <v-col md="8" lg="8" xl="8">
         <v-card flat>
-          <div class="chat-container">
+          <div
+            :class="`chat-container ${
+              $vuetify.breakpoint.mobile ? 'mobile' : ''
+            }`"
+          >
             <div
               v-for="(message, index) in messages"
               :key="index"
               class="message mb-2"
               :class="{ own: message.socketID === socketID }"
             >
-              <div v-if="message.socketID === socketID" class="username">
-                <div
-                  v-if="
-                    message.type === 'message' &&
-                    index > 0 &&
-                    messages[index - 1].socketID != message.socketID
-                  "
-                >
-                  {{ $auth.user.username }}#{{ $auth.user.discriminator }}
-                </div>
-                <div v-if="message.type === 'message' && index == 0">
-                  {{ $auth.user.username }}#{{ $auth.user.discriminator }}
-                </div>
-              </div>
-              <div v-if="message.socketID !== socketID" class="username">
-                <div
-                  v-if="
-                    message.type === 'message' &&
-                    index > 0 &&
-                    messages[index - 1].socketID != message.socketID
-                  "
-                >
-                  {{ message.username ? message.username : 'Stranger' }}
-                </div>
-                <div v-if="message.type === 'message' && index == 0">
-                  {{ message.username ? message.username : 'Stranger' }}
-                </div>
-              </div>
-              <div v-if="message.type === 'message'" class="content">
-                {{ message.content }}
-              </div>
-              <div v-if="message.type === 'notification'" class="notification">
-                {{ message.content }}
-              </div>
+              <div
+                v-if="message.type === 'message'"
+                class="content"
+                v-text="message.content"
+              />
+              <div
+                v-if="message.type === 'notification'"
+                class="notification"
+                v-text="message.content"
+              />
             </div>
           </div>
-          <v-text-field
-            v-model="inputMessage"
-            class="px-3 pt-2"
-            outlined
-            autofocus
-            :disabled="disableChat"
-            :placeholder="disableChat ? 'User left' : 'Type a message...'"
-            color="orange darken-2"
-            clearable
-            @keyup.enter="sendMessage"
-          />
+          <v-row>
+            <v-col xs="10" sm="10" md="10" lg="11" xl="11">
+              <v-text-field
+                v-model="inputMessage"
+                class="px-3 pt-2"
+                outlined
+                autofocus
+                :disabled="disableChat"
+                :placeholder="disableChat ? 'User left' : 'Type a message...'"
+                color="orange darken-2"
+                clearable
+                @keyup.enter="sendMessage"
+              />
+            </v-col>
+            <v-btn
+              :class="`mt-5 ${$vuetify.breakpoint.mobile ? 'mr-5' : ''} `"
+              :disabled="!inputMessage.trim().length"
+              icon
+              color="orange darken-2"
+              x-large
+              @click="sendMessage"
+            >
+              <v-icon v-text="icons.send" />
+            </v-btn>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -367,9 +386,13 @@ export default Vue.extend({
 
 .chat-container {
   box-sizing: border-box;
-  height: calc(100vh - 10rem);
+  height: calc(100vh - 15rem);
   overflow-y: auto;
   padding: 10px;
+}
+
+.chat-container.mobile {
+  height: calc(100vh - 30rem);
 }
 
 .chat-container .username {

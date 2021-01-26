@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-col cols="6">
+    <v-col md="6" lg="6" xl="6">
       <v-card outlined>
         <v-card-text class="text-center text-h6 orange--text text--darken-2">
           Welcome to Concordis!
