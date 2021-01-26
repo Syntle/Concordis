@@ -21,7 +21,12 @@
         </v-card-text>
         <v-card-text>
           You could also use the
-          <a href="/demo" class="text-decoration-none">demo</a>
+          <span
+            @click="$router.push('/demo')"
+            class="font-weight-bold orange--text"
+            style="cursor: pointer"
+            v-text="'demo'"
+          />
           page in case you don't have a Discord account or don't wish to login!
         </v-card-text>
       </v-card>
