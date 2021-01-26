@@ -32,6 +32,25 @@ const friendsConn = createConnection(process.env.MONGODB_URL!, {
 
 const FriendModel = friendsConn.model('Friend', FriendSchema)
 
+interface SessionData {
+  id: string
+  accessToken: string
+  refreshToken: string
+  expiresIn: number
+  scope: string
+}
+
+interface SettingsData {
+  userID: string
+  theme: string
+}
+
+interface FriendData {
+  userID: string
+  friendID: string
+  friendUsername: string
+}
+
 const schema = buildSchema(`
   type Query {
     getSession(id: ID!): Session
@@ -82,18 +101,18 @@ const schema = buildSchema(`
 `)
 
 const resolvers = {
-  setSession: ({ accessToken, refreshToken, expiresIn, scope }) =>
+  setSession: ({ accessToken, refreshToken, expiresIn, scope }: SessionData) =>
     SessionModel.create({
       accessToken: accessToken,
       refreshToken: refreshToken,
       expiresIn: expiresIn,
       scope: scope,
     }),
-  deleteSession: ({ id }) => SessionModel.findByIdAndDelete(id),
-  getSession: ({ id }) => SessionModel.findById(id),
-  sessionExists: ({ accessToken }) =>
+  deleteSession: ({ id }: SessionData) => SessionModel.findByIdAndDelete(id),
+  getSession: ({ id }: SessionData) => SessionModel.findById(id),
+  sessionExists: ({ accessToken }: SessionData) =>
     SessionModel.findOne({ accessToken: accessToken }),
-  setSettings: async ({ userID, theme }) => {
+  setSettings: async ({ userID, theme }: SettingsData) => {
     const settings = await SettingsModel.exists({ userID: userID })
 
     if (settings) {
@@ -107,8 +126,9 @@ const resolvers = {
 
     return SettingsModel.findOne({ userID: userID })
   },
-  getSettings: ({ userID }) => SettingsModel.findOne({ userID: userID }),
-  addFriend: async ({ userID, friendID, friendUsername }) => {
+  getSettings: ({ userID }: SettingsData) =>
+    SettingsModel.findOne({ userID: userID }),
+  addFriend: async ({ userID, friendID, friendUsername }: FriendData) => {
     const friendList = await FriendModel.exists({ userID: userID })
 
     if (friendList) {
@@ -132,8 +152,9 @@ const resolvers = {
       )
     }
   },
-  getFriends: ({ userID }) => FriendModel.findOne({ userID: userID }),
-  removeFriend: async ({ userID, friendID }) => {
+  getFriends: ({ userID }: FriendData) =>
+    FriendModel.findOne({ userID: userID }),
+  removeFriend: async ({ userID, friendID }: FriendData) => {
     await FriendModel.updateOne(
       { userID: userID },
       { $pull: { friends: { id: friendID } } }
