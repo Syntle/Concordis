@@ -42,8 +42,9 @@
                       :disabled="joinQueueDisabled"
                       color="green darken-2"
                       @click="addToQueue()"
-                      v-text="'Join Queue'"
-                    />
+                    >
+                      Join Queue
+                    </v-btn>
                   </div>
                   <div class="d-flex justify-center mb-1">
                     <v-switch
