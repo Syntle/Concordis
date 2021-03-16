@@ -30,7 +30,7 @@
     "@nuxt/types": "^2.14.10",
     "@nuxt/typescript-build": "^2.0.3",
     "@nuxtjs/eslint-config": "^6.0.0",
-    "@nuxtjs/eslint-config-typescript": "^5.0.0",
+    "@nuxtjs/eslint-config-typescript": "^6.0.0",
     "@nuxtjs/eslint-module": "^3.0.1",
     "@nuxtjs/vuetify": "^1.11.2",
     "@types/mongoose": "^5.7.36",
