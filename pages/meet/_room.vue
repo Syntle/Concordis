@@ -84,7 +84,7 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-tooltip v-if="disableAddBtn" top>
+              <v-tooltip v-if="disableAddBtn && stranger.id" top>
                 <template #activator="{ on, attrs }">
                   <v-btn
                     v-bind="attrs"
