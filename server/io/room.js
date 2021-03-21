@@ -68,7 +68,13 @@ const joinedRoom = async (socket, io, user, room) => {
     return socket.emit('joinedRoom', { response: 'Unauthorised' })
   }
 
-  io.of('room').sockets[`/room#${user.socketID}`].join(room)
+  io.of('room')
+    .sockets.get(
+      Array.from(io.of('room').sockets).find(
+        (socket) => socket[1].client.id === user.socketID
+      )[0]
+    )
+    .join(room)
 
   const roomUsers = rooms.find((r) => r.id === room).users
   const user2ID = roomUsers.find((u) => u !== user.id)
@@ -106,13 +112,25 @@ const joinedRoom = async (socket, io, user, room) => {
       areFriends,
     })
 
-    io.of('room').to(`/room#${user.socketID}`).emit('alreadyFriends', {
-      user: user2,
-    })
+    io.of('room')
+      .sockets.get(
+        Array.from(io.of('room').sockets).find(
+          (socket) => socket[1].client.id === user.socketID
+        )[0]
+      )
+      .emit('alreadyFriends', {
+        user: user2,
+      })
 
-    io.of('room').to(`/room#${user2.socketID}`).emit('alreadyFriends', {
-      user,
-    })
+    io.of('room')
+      .sockets.get(
+        Array.from(io.of('room').sockets).find(
+          (socket) => socket[1].client.id === user2.socketID
+        )[0]
+      )
+      .emit('alreadyFriends', {
+        user,
+      })
   }
 
   const userInterests = user.interests.map((interest) => {
@@ -180,7 +198,13 @@ const friendRequest = async (socket, io, user, room) => {
   const receiverID = r.users.find((u) => u !== user.id)
   const receiver = users.find((u) => u.id === receiverID)
 
-  io.of('room').to(`/room#${receiver.socketID}`).emit('friendRequest')
+  io.of('room')
+    .sockets.get(
+      Array.from(io.of('room').sockets).find(
+        (socket) => socket[1].client.id === receiver.socketID
+      )[0]
+    )
+    .emit('friendRequest')
 }
 
 const acceptedFriend = async (socket, io, user, room) => {
@@ -207,9 +231,15 @@ const acceptedFriend = async (socket, io, user, room) => {
     areFriends: true,
   })
 
-  io.of('room').to(`/room#${receiver.socketID}`).emit('acceptedFriend', {
-    user,
-  })
+  io.of('room')
+    .sockets.get(
+      Array.from(io.of('room').sockets).find(
+        (socket) => socket[1].client.id === receiver.socketID
+      )[0]
+    )
+    .emit('acceptedFriend', {
+      user,
+    })
 
   await axios({
     method: 'post',
@@ -248,7 +278,13 @@ const rejectedFriend = async (socket, io, userID, room) => {
   const receiverID = r.users.find((u) => u !== userID)
   const receiver = users.find((u) => u.id === receiverID)
 
-  io.of('room').to(`/room#${receiver.socketID}`).emit('rejectedFriend')
+  io.of('room')
+    .sockets.get(
+      Array.from(io.of('room').sockets).find(
+        (socket) => socket[1].client.id === receiver.socketID
+      )[0]
+    )
+    .emit('rejectedFriend')
 }
 
 //  Messages

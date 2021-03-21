@@ -225,12 +225,25 @@ const createRoom = async (socket, io, user1, user2) => {
     },
   })
 
-  io.of('queue').sockets[`/queue#${user1.socketID}`].emit('joinRoom', {
-    route: id,
-  })
-  io.of('queue').sockets[`/queue#${user2.socketID}`].emit('joinRoom', {
-    route: id,
-  })
+  io.of('queue')
+    .sockets.get(
+      Array.from(io.of('queue').sockets).find(
+        (socket) => socket[1].client.id === user1.socketID
+      )[0]
+    )
+    .emit('joinRoom', {
+      route: id,
+    })
+
+  io.of('queue')
+    .sockets.get(
+      Array.from(io.of('queue').sockets).find(
+        (socket) => socket[1].client.id === user2.socketID
+      )[0]
+    )
+    .emit('joinRoom', {
+      route: id,
+    })
 }
 
 const isInRoom = async (socket, io, user) => {
@@ -251,19 +264,9 @@ const getSocketID = (socket, io) => {
 }
 
 const isConnected = (socket, io, user) => {
-  if (user) {
-    if (Object.keys(io.of('queue').sockets).length) {
-      if (io.of('queue').sockets[socket.id]) return true
-      return false
-    }
-    return false
-  } else {
-    if (Object.keys(io.sockets.sockets).length) {
-      if (io.sockets.sockets[user.socketID]) return true
-      return false
-    }
-    return false
-  }
+  if (io.of('queue').sockets.has(socket.id)) return true
+
+  return false
 }
 
 const createUser = async (socket, io, user, interests) => {
