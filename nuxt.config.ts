@@ -157,7 +157,7 @@ export default {
   router: {
     middleware: ['user'],
   },
-  serverMiddleware: ['~/api/discord', '~/api/io', '~/graphql/main'],
+  serverMiddleware: ['./api/discord', './api/io', './graphql/main'],
   privateRuntimeConfig: {
     CLIENT_SECRET: process.env.CLIENT_SECRET,
   },
