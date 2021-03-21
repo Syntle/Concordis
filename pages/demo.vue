@@ -272,17 +272,7 @@ export default Vue.extend({
     autoJoin(newVal) {
       if (this.countdownStarted && newVal) return
       if (newVal) {
-        this.countdownStarted = true
-        // @ts-ignore
-        this.countdownID = setInterval(() => {
-          if (this.autoJoinTimer > 0) {
-            this.autoJoinTimer--
-          } else if (this.autoJoinTimer === 0) {
-            clearInterval(this.countdownID!)
-            this.addToQueue()
-            this.autoJoinTimer = 5
-          }
-        }, 1000)
+        this.countdown()
       } else {
         clearInterval(this.countdownID!)
         this.countdownStarted = false
@@ -369,6 +359,21 @@ export default Vue.extend({
       this.stranger = 'Stranger'
       this.friended = false
       this.inputMessage = ''
+
+      if (this.autoJoin) this.countdown()
+    },
+    countdown() {
+      this.countdownStarted = true
+      // @ts-ignore
+      this.countdownID = setInterval(() => {
+        if (this.autoJoinTimer > 0) {
+          this.autoJoinTimer--
+        } else if (this.autoJoinTimer === 0) {
+          clearInterval(this.countdownID!)
+          this.addToQueue()
+          this.autoJoinTimer = 5
+        }
+      }, 1000)
     },
   },
 })
